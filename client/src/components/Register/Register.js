@@ -1,10 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
 
-const Register = ({ onRouteChange }) => {
+const Register = ({ onRouteChange, loadUser }) => {
+  const [userCredentials, setUserCredentials] = useState({
+    name: "",
+    email: "",
+    password: ""
+  });
+
+  const { name, email, password } = userCredentials;
+
+  const handleChange = ({ target }) => {
+    const { value, name } = target;
+
+    setUserCredentials({ ...userCredentials, [name]: value });
+  };
+
+  const onSubmitSignIn = e => {
+    e.preventDefault();
+
+    fetch("http://localhost:3001/register", {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password })
+    })
+      .then(res => res.json())
+      .then(user => {
+        if (user) {
+          loadUser(user);
+          onRouteChange("home");
+        }
+      });
+  };
+
   return (
     <article className="br3 ba dark-gray b--black-10 mv4 w-100 w-50-m w-25-l mw6 shadow-3 center">
       <main className="pa4 black-80">
-        <form className="measure">
+        <form className="measure" onSubmit={onSubmitSignIn}>
           <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
             <legend className="f1 fw6 ph0 mh0">Register</legend>
             <div className="mt3">
@@ -12,6 +43,8 @@ const Register = ({ onRouteChange }) => {
                 Name
               </label>
               <input
+                onChange={handleChange}
+                value={name}
                 className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
                 type="text"
                 name="name"
@@ -23,9 +56,11 @@ const Register = ({ onRouteChange }) => {
                 Email
               </label>
               <input
+                onChange={handleChange}
+                value={email}
                 className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
                 type="email"
-                name="email-address"
+                name="email"
                 id="email-address"
               />
             </div>
@@ -34,6 +69,8 @@ const Register = ({ onRouteChange }) => {
                 Password
               </label>
               <input
+                onChange={handleChange}
+                value={password}
                 className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
                 type="password"
                 name="password"
@@ -41,14 +78,9 @@ const Register = ({ onRouteChange }) => {
               />
             </div>
           </fieldset>
-          <div className="">
-            <input
-              onClick={() => onRouteChange('home')}
-              className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib"
-              type="submit"
-              value="Register"
-            />
-          </div>
+          <button className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f4 dib" type="submit">
+            Register
+          </button>
         </form>
       </main>
     </article>

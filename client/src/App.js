@@ -26,12 +26,26 @@ const particlesOptions = {
   }
 };
 
+const initialUserState = {
+  id: "",
+  name: "",
+  email: "",
+  entries: 0,
+  joined: ""
+};
+
 const App = () => {
   const [input, setInput] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [box, setBox] = useState({});
   const [route, setRoute] = useState("signin");
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const [user, setUser] = useState(initialUserState);
+
+  const loadUser = data => {
+    const { id, name, email, entries, joined } = data;
+    setUser({ ...user, id, name, email, entries, joined });
+  };
 
   const calculateFaceLocation = data => {
     const clarifaiFace =
@@ -48,8 +62,7 @@ const App = () => {
     };
   };
 
-  const display = box => {
-    console.log("box:", box);
+  const displayFaceBox = box => {
     setBox(box);
   };
 
@@ -57,22 +70,35 @@ const App = () => {
     setInput(target.value);
   };
 
-  const onSubmit = () => {
+  const onPictureSubmit = () => {
+    const { id } = user;
     setImageUrl(input);
 
     app.models
       .predict("a403429f2ddf4b49b307e318f00e528b", input)
-      .then(response =>
-        // do something with response
-        display(calculateFaceLocation(response))
-      )
+      .then(response => {
+        if (response) {
+          fetch("http://localhost:3001/image", {
+            method: "put",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id })
+          })
+            .then(res => res.json())
+            .then(count => {
+              setUser(Object.assign(user, { entries: count }));
+            })
+            .catch(console.log);
+        }
+        displayFaceBox(calculateFaceLocation(response));
+      })
       .catch(err => console.log(err));
   };
 
   const onRouteChange = route => {
     if (route === "signout") {
       setIsSignedIn(false);
-    } else if (route === "home"){
+      setUser(initialUserState);
+    } else if (route === "home") {
       setIsSignedIn(true);
     }
     setRoute(route);
@@ -85,14 +111,17 @@ const App = () => {
       {route === "home" ? (
         <>
           <Logo />
-          <Rank />
-          <ImageLinkForm onInputChange={onInputChange} onSubmit={onSubmit} />
+          <Rank user={user} />
+          <ImageLinkForm
+            onInputChange={onInputChange}
+            onSubmit={onPictureSubmit}
+          />
           <FaceRecognition imageUrl={imageUrl} box={box} />
         </>
       ) : route === "signin" ? (
-        <Signin onRouteChange={onRouteChange} />
+        <Signin onRouteChange={onRouteChange} loadUser={loadUser} />
       ) : (
-        <Register onRouteChange={onRouteChange} />
+        <Register onRouteChange={onRouteChange} loadUser={loadUser} />
       )}
     </div>
   );
