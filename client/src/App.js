@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Particles from "react-particles-js";
-import Clarifai from "clarifai";
 
 import Navigation from "./components/Navigation/Navigation";
 import Logo from "./components/Logo/Logo";
@@ -11,10 +10,6 @@ import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
 import "./App.css";
 import Signin from "./components/Signin/Signin";
 import Register from "./components/Register/Register";
-
-const app = new Clarifai.App({
-  apiKey: "010e9af0b5744483ba4fbab6eb22af45"
-});
 
 const particlesOptions = {
   line_linked: {
@@ -74,8 +69,12 @@ const App = () => {
     const { id } = user;
     setImageUrl(input);
 
-    app.models
-      .predict("a403429f2ddf4b49b307e318f00e528b", input)
+    fetch("http://localhost:3001/imageurl", {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ input: input })
+    })
+      .then(response => response.json())
       .then(response => {
         if (response) {
           fetch("http://localhost:3001/image", {
