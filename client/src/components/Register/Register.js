@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import {config} from '../utils/config';
+
 const Register = ({ onRouteChange, loadUser }) => {
   const [userCredentials, setUserCredentials] = useState({
     name: "",
@@ -18,7 +20,7 @@ const Register = ({ onRouteChange, loadUser }) => {
   const onSubmitSignIn = e => {
     e.preventDefault();
 
-    fetch("http://localhost:3001/register", {
+    fetch(`${config.URL}register`, {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, password })

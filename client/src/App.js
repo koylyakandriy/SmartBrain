@@ -6,10 +6,12 @@ import Logo from "./components/Logo/Logo";
 import Rank from "./components/Rank/Rank";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
-
-import "./App.css";
 import Signin from "./components/Signin/Signin";
 import Register from "./components/Register/Register";
+
+import { config } from "./components/utils/config";
+
+import "./App.css";
 
 const particlesOptions = {
   line_linked: {
@@ -69,7 +71,7 @@ const App = () => {
     const { id } = user;
     setImageUrl(input);
 
-    fetch("http://localhost:3001/imageurl", {
+    fetch(`${config.URL}imageurl`, {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ input: input })
@@ -77,7 +79,7 @@ const App = () => {
       .then(response => response.json())
       .then(response => {
         if (response) {
-          fetch("http://localhost:3001/image", {
+          fetch(`${config.URL}image`, {
             method: "put",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id })
