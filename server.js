@@ -12,8 +12,10 @@ const image = require("./controllers/image");
 const db = knex({
   client: "pg",
   connection: {
+    //heroku DB
     connectionString: process.env.DATABASE_URL,
     ssl: true
+    //local DB
     // host: "127.0.0.1",
     // user: "ugp",
     // password: "",
