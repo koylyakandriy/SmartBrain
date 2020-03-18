@@ -20,7 +20,7 @@ const Register = ({ onRouteChange, loadUser }) => {
   const onSubmitSignIn = e => {
     e.preventDefault();
 
-    fetch(`${config.URL}register`, {
+    fetch(`${config.URL}api/register`, {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, password })

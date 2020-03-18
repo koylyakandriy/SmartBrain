@@ -27,25 +27,25 @@ const PORT = process.env.PORT || 3001;
 app.use(bodyParser.json());
 app.use(cors());
 
-app.get("/", (req, res) => {
+app.get("/api/", (req, res) => {
   res.json("Home page");
 });
 
-app.post("/signin", signin.handleSignin(db, bcrypt));
+app.post("/api/signin", signin.handleSignin(db, bcrypt));
 
-app.post("/register", (req, res) => {
+app.post("/api/register", (req, res) => {
   register.handleRegister(res, req, db, bcrypt);
 });
 
-app.get("/profile/:id", (req, res) => {
+app.get("/api/profile/:id", (req, res) => {
   profile.handleProfileGet(req, res, db);
 });
 
-app.put("/image", (req, res) => {
+app.put("/api/image", (req, res) => {
   image.handleImage(req, res, db);
 });
 
-app.post("/imageurl", (req, res) => {
+app.post("/api/imageurl", (req, res) => {
   image.handleApiCall(req, res);
 });
 

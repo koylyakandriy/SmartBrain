@@ -71,7 +71,7 @@ const App = () => {
     const { id } = user;
     setImageUrl(input);
 
-    fetch(`${config.URL}imageurl`, {
+    fetch(`${config.URL}api/imageurl`, {
       method: "post",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ input: input })
@@ -79,7 +79,7 @@ const App = () => {
       .then(response => response.json())
       .then(response => {
         if (response) {
-          fetch(`${config.URL}image`, {
+          fetch(`${config.URL}api/image`, {
             method: "put",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id })
